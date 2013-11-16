@@ -1,0 +1,27 @@
+<!-- Modal -->
+<div class="modal fade" id="foModal" tabindex="-1" role="dialog" aria-labelledby="foModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    {% if form %}
+    <form id="{{ form }}">
+    {% endif %}
+      <div class="modal-content">
+        <div class="modal-header">
+          {% if close %}
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          {% endif %}
+          <h4 class="modal-title" id="foModalLabel">{{ title }}</h4>
+        </div>
+        <div class="modal-body">
+          {{ content }}
+        </div>
+        {% if buttons %}
+        <div class="modal-footer">
+        {{ buttons }}
+        </div>
+        {% endif %}
+      </div><!-- /.modal-content -->
+    {% if form %}
+    <form id="{{ form }}">
+    {% endif %}
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

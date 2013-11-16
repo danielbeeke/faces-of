@@ -11,5 +11,9 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "twig.js": "~0.5.12",
+    "jquery.cookie": "~1.4.0"
+  }
 }
