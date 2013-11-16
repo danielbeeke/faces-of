@@ -1,0 +1,15 @@
+{
+  "name": "faces_of",
+  "version": "0.0.0",
+  "authors": [
+    "daniel beeke <daniel.beeke@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
