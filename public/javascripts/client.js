@@ -4,7 +4,7 @@ $(function() {
       socket: io.connect('http://localhost:3000'),
       facebookId: $.cookie('facebookId'),
       debug: true,
-      templates: {}
+      templates: {},
     }
 
     // An object so everything stays nice and clean.
@@ -13,10 +13,10 @@ $(function() {
       init: function () {
         if (!vars.facebookId) {
           f.clm('no facebookId')
-          f.login()
+          f.loginModal()
         }
         else {
-          vars.socket.emit('loggedIn', { facebookId: vars.facebookId })
+          f.login()
         }
       },
 
@@ -26,7 +26,7 @@ $(function() {
       },
 
       // Try to login
-      login: function () {
+      loginModal: function () {
           f.setModal({
             title: f.t('What is your facebook ID?'),
             form: 'connectFacebook',
@@ -36,8 +36,8 @@ $(function() {
             buttons: '<button id="login" type="submit" class="btn btn-primary">' + f.t('Login') + '</button>',
             content: '<div class="form-group">' +
                         '<label class="sr-only" for="facebookId">Facebook ID</label>' +
-                        '<input type="text" class="form-control" id="facebookId" placeholder="Facebook ID">' +
-                        '<img class="img-thumbnail" src="/images/default-image-small.jpg" id="facebook-profile-image" />' +
+                        '<input type="text" id="facebookId" class="form-control" placeholder="Facebook ID">' +
+                        '<div id="person-login"></div>' +
                       '</div>'
           }, function () {
             // The modal is set, attach handlers.
@@ -49,7 +49,10 @@ $(function() {
             // Change the image on keypress.
             $('#facebookId').on('keyup change', function () {
               $('#connectFacebook').removeClass('has-error')
-              $('#facebook-profile-image').attr('src', 'https://graph.facebook.com/' + $(this).val() + '/picture')
+
+              $.getJSON('https://graph.facebook.com/' + $(this).val(), function (response) {
+                $('#person-login').html(f.render('person-login', response))
+              })
             })
 
             // Submit handler/
@@ -58,8 +61,7 @@ $(function() {
               if ($('#facebook-profile-image').attr('src') != '/images/default-image-small.jpg') {
                 $.cookie('facebookId', $('#facebookId').val())
                 vars.facebookId = $('#facebookId').val()
-                vars.socket.emit('loggedIn', { facebookId: vars.facebookId })
-                $('#foModal').modal('hide')
+                f.login()
               }
               else {
                 $('#connectFacebook').addClass('has-error')
@@ -68,6 +70,14 @@ $(function() {
               return false
             })
           })
+      },
+
+      // Login
+      login: function () {
+        $.getJSON('https://graph.facebook.com/' + vars.facebookId, function (response) {
+          vars.socket.emit('loggedIn', response)
+          $('#foModal').modal('hide')
+        })
       },
 
       // Sets a console message if in debugging mode.
@@ -97,6 +107,19 @@ $(function() {
         return string
       },
 
+      // Add a person to the grid.
+      addPersonOnline: function (data) {
+        console.log(data)
+
+        var person = f.render('person-online', data)
+        
+        if ($('#' + data.facebookId).length) {
+          $('#' + data.facebookId).remove()
+        }
+
+        $('#people').append(person)
+      },
+
       // Gets and renders twig template.
       render: function (template, object) {
         if (!vars.templates[template]) {
@@ -115,6 +138,10 @@ $(function() {
     // Attaching events.
     vars.socket.on('message', function (data) {
       f.recieve(data)
+    })
+
+    vars.socket.on('addPersonOnline', function (data) {
+      f.addPersonOnline(data)
     })
 
     // Init the app.

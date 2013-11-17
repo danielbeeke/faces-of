@@ -13,9 +13,7 @@ app.use(express.static(__dirname + '/public'))
 
 // Index html.
 app.get('/', function(req, res){
-  res.render('index.twig', {
-    message : "Hello World"
-  })
+  res.render('index.twig')
 })
 
 // Socket.io server.
@@ -25,6 +23,10 @@ io.sockets.on('connection', function (socket) {
     // socket.emit('message', { message: 'welcome to the chat' });
 
     socket.on('loggedIn', function (data) {
-        console.log(data)
+      console.log(socket.id)
     })
-});
+
+    socket.on('disconnect', function() {
+      console.log(socket.id)
+    })
+})
