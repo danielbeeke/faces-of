@@ -2,7 +2,7 @@ $(function() {
 
   // Init the app.
   f.init = function () {
-    f.loginModal()
+    f.initSocket()
   }
 
   f.init()

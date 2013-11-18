@@ -22,7 +22,7 @@ passport.use(new TwitterStrategy({
 
 passport.serializeUser(function(req, profile, done) {
   objects.people[req.sessionID] = profile
-  done(null, profile.profileUrl);
+  done(null, req.sessionID);
 });
 
 passport.deserializeUser(function(id, done) {
